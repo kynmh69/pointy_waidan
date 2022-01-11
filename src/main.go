@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"pointy/model"
 	"regexp"
 )
 
@@ -11,7 +12,7 @@ func main() {
 	count := 1
 	r := regexp.MustCompile(`<title>.*</title>`)
 	r_break := regexp.MustCompile(`<title>THE猥談募集フォーム</title>`)
-	artice_list := make([]Article, 0)
+	artice_list := make([]model.Article, 0)
 	for {
 		rsp, shouldReturn := Get(count)
 		if shouldReturn {
@@ -27,7 +28,7 @@ func main() {
 		if r_break.MatchString(body) {
 			break
 		}
-		artice_list = append(artice_list, *New(count, m_str))
+		artice_list = append(artice_list, *model.New(count, m_str))
 		count += 1
 	}
 	for _, v := range artice_list {
@@ -44,21 +45,4 @@ func Get(num int) (*http.Response, bool) {
 		return nil, true
 	}
 	return rsp, false
-}
-
-type Article struct {
-	number int
-	title  string
-}
-
-func (a *Article) GetUrl() string {
-	return fmt.Sprintf("https://thewaidan.studio.site/%d", a.number)
-}
-
-func (a *Article) PrintTitle() {
-	fmt.Println("title: ", a.title)
-}
-
-func New(number int, title string) *Article {
-	return &Article{number: number, title: title}
 }
