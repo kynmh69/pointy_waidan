@@ -8,10 +8,13 @@ import (
 	"regexp"
 )
 
+const TITLE_REGX = `<title>.*</title>`
+const BREAK_TITLE_REGX = `<title>THE猥談募集フォーム</title>`
+
 func main() {
 	count := 1
-	r := regexp.MustCompile(`<title>.*</title>`)
-	r_break := regexp.MustCompile(`<title>THE猥談募集フォーム</title>`)
+	r := regexp.MustCompile(TITLE_REGX)
+	r_break := regexp.MustCompile(BREAK_TITLE_REGX)
 	artice_list := make([]model.Article, 0)
 	for {
 		rsp, shouldReturn := Get(count)

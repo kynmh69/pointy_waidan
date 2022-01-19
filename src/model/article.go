@@ -1,20 +1,22 @@
 package model
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Article struct {
-	number int
-	title  string
+	Number int    `json:"number"`
+	Title  string `json:"title"`
 }
 
 func (a *Article) GetUrl() string {
-	return fmt.Sprintf("https://thewaidan.studio.site/%d", a.number)
+	return fmt.Sprintf("https://thewaidan.studio.site/%d", a.Number)
 }
 
 func (a *Article) PrintTitle() {
-	fmt.Println("title: ", a.title)
+	fmt.Println("title: ", a.Title)
 }
 
 func New(number int, title string) *Article {
-	return &Article{number: number, title: title}
+	return &Article{Number: number, Title: title}
 }
