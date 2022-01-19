@@ -1,11 +1,10 @@
-package main
+package control
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
-	"os"
 	"pointy/model"
+	"pointy/utils"
 
 	_ "github.com/lib/pq"
 )
@@ -18,35 +17,43 @@ const (
 	DB_NAME     = "postgres"
 )
 
-func WriteJson(article_list *model.Article) error {
-	f, _ := os.Create("./output.json")
-	defer f.Close()
-	err := json.NewEncoder(f).Encode(article_list)
-	if err != nil {
-		return err
-	}
-	return nil
+func GetAllData() {
+	db := connectDb()
+	defer db.Close()
+	rows, err := db.Query("SELECT * FROM pointy")
+	utils.CheckError(err)
+	articles := createArticleList(rows)
+	fmt.Printf("%v", articles)
 }
 
-func main() {
-	connectionInfo := fmt.Sprintf("host=%s port=5432 user=%s password=%s dbname=%s sslmode=disable", IP_ADDRESS, USER, PASS, DB_NAME)
-	db, err := sql.Open(DRIVER_NAME, connectionInfo)
-
-	utils.checkError(err)
-
+func InsertData(a *[]model.Article) {
+	db := connectDb()
 	defer db.Close()
-
-	rows, err := db.Query("SELECt * FROM pointy")
-	if err != nil {
-		fmt.Println(err)
-		return
+	for _, v := range *a {
+		r, err := db.Exec("INSERT INTO pointy (title) VALUES ($1);", v.Title)
+		utils.CheckError(err)
+		fmt.Println("insert result: ", r)
 	}
+
+}
+
+func createArticleList(rows *sql.Rows) []model.Article {
 	var articles []model.Article
 	for rows.Next() {
 		var a model.Article
 		rows.Scan(&a.Number, &a.Title)
 		articles = append(articles, a)
 	}
-	fmt.Printf("%v", articles)
+	return articles
+}
 
+func connectDb() *sql.DB {
+	connectionInfo := GetConnectionInfo()
+	db, err := sql.Open(DRIVER_NAME, connectionInfo)
+	utils.CheckError(err)
+	return db
+}
+
+func GetConnectionInfo() string {
+	return fmt.Sprintf("host=%s port=5432 user=%s password=%s dbname=%s sslmode=disable", IP_ADDRESS, USER, PASS, DB_NAME)
 }

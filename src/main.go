@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"pointy/control"
 	"pointy/model"
 	"regexp"
 )
@@ -37,6 +38,7 @@ func main() {
 	for _, v := range artice_list {
 		fmt.Println(v.GetUrl())
 	}
+	control.InsertData(&artice_list)
 
 }
 
