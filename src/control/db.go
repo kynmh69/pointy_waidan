@@ -10,6 +10,14 @@ import (
 	_ "github.com/lib/pq"
 )
 
+const (
+	DRIVER_NAME = "postgres"
+	IP_ADDRESS  = "127.0.0.1"
+	USER        = "postgres"
+	PASS        = "postgres"
+	DB_NAME     = "postgres"
+)
+
 func WriteJson(article_list *model.Article) error {
 	f, _ := os.Create("./output.json")
 	defer f.Close()
@@ -21,12 +29,11 @@ func WriteJson(article_list *model.Article) error {
 }
 
 func main() {
-	db, err := sql.Open("postgres", "host=127.0.0.1 port=5432 user=postgres password=postgres dbname=pointy sslmode=disable")
+	connectionInfo := fmt.Sprintf("host=%s port=5432 user=%s password=%s dbname=%s sslmode=disable", IP_ADDRESS, USER, PASS, DB_NAME)
+	db, err := sql.Open(DRIVER_NAME, connectionInfo)
 
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	utils.checkError(err)
+
 	defer db.Close()
 
 	rows, err := db.Query("SELECt * FROM pointy")
