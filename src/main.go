@@ -2,12 +2,15 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"pointy/control"
 	"pointy/handler"
 	"pointy/utils"
 )
+
+var templates = make(map[string]*template.Template)
 
 func updateDB() {
 	max_id := 0
@@ -34,6 +37,8 @@ func updateDB() {
 }
 func main() {
 	updateDB()
+
+	templates["index"] = handler.LoadTemplate("index")
 
 	port := "8080"
 	http.HandleFunc("/", handler.HandleIndex)
