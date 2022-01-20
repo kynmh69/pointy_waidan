@@ -17,16 +17,17 @@ const (
 	DB_NAME     = "postgres"
 )
 
-func GetAllData() {
+func GetAllData() *[]*model.Article {
 	db := connectDb()
 	defer db.Close()
-	rows, err := db.Query("SELECT * FROM pointy")
+	rows, err := db.Query("SELECT * FROM pointy order by id")
 	utils.CheckError(err)
 	articles := createArticleList(rows)
-	fmt.Printf("%v", articles)
+	// fmt.Printf("%v\n", &articles)
+	return articles
 }
 
-func InsertData(a *[]model.Article) {
+func InsertData(a *[]*model.Article) {
 	db := connectDb()
 	defer db.Close()
 	for _, v := range *a {
@@ -37,14 +38,49 @@ func InsertData(a *[]model.Article) {
 
 }
 
-func createArticleList(rows *sql.Rows) []model.Article {
-	var articles []model.Article
+func UpdateData(a *[]*model.Article) {
+	db := connectDb()
+	defer db.Close()
+	for _, v := range *a {
+		r, err := db.Exec("UPDATE pointy SET title = $1 WHERE id = $2;", v.Title, v.Number)
+		utils.CheckError(err)
+		fmt.Println("result: ", r)
+	}
+}
+
+func GetLastRow() *model.Article {
+	db := connectDb()
+	defer db.Close()
+
+	row := db.QueryRow("select * from pointy order by id desc limit 1;")
+	if row.Err() != nil {
+		return nil
+	}
+	a := scanRow(row)
+
+	fmt.Println("a: ", *a)
+	return a
+}
+
+func createArticleList(rows *sql.Rows) *[]*model.Article {
+	var articles []*model.Article
 	for rows.Next() {
-		var a model.Article
-		rows.Scan(&a.Number, &a.Title)
+		a := scanRows(rows)
 		articles = append(articles, a)
 	}
-	return articles
+	return &articles
+}
+
+func scanRow(row *sql.Row) *model.Article {
+	var a model.Article
+	row.Scan(&a.Number, &a.Title)
+	return &a
+}
+
+func scanRows(rows *sql.Rows) *model.Article {
+	var a model.Article
+	rows.Scan(&a.Number, &a.Title)
+	return &a
 }
 
 func connectDb() *sql.DB {

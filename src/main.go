@@ -2,52 +2,30 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"net/http"
 	"pointy/control"
-	"pointy/model"
-	"regexp"
+	"pointy/utils"
 )
 
-const TITLE_REGX = `<title>.*</title>`
-const BREAK_TITLE_REGX = `<title>THE猥談募集フォーム</title>`
-
 func main() {
-	count := 1
-	r := regexp.MustCompile(TITLE_REGX)
-	r_break := regexp.MustCompile(BREAK_TITLE_REGX)
-	artice_list := make([]model.Article, 0)
-	for {
-		rsp, shouldReturn := Get(count)
-		if shouldReturn {
-			return
-		}
-		defer rsp.Body.Close()
-		body_byte, _ := io.ReadAll(rsp.Body)
-		body := string(body_byte)
-
-		m_str := r.FindString(body)
-		fmt.Println("match string: ", m_str)
-
-		if r_break.MatchString(body) {
-			break
-		}
-		artice_list = append(artice_list, *model.New(count, m_str))
-		count += 1
+	max_id := 0
+	article := control.GetLastRow()
+	if article != nil {
+		max_id = article.Number
 	}
-	for _, v := range artice_list {
+	fmt.Println("max id: ", max_id)
+
+	// htmlから情報吸い出し
+	article_list := *utils.GetArticle(max_id)
+	if len(article_list) <= 0 {
+		fmt.Println("空リスト")
+	}
+
+	// テーブルに挿入
+	control.InsertData(&article_list)
+	// 全てのデータ取得
+	article_list = *control.GetAllData()
+	for _, v := range article_list {
 		fmt.Println(v.GetUrl())
 	}
-	control.InsertData(&artice_list)
 
-}
-
-func Get(num int) (*http.Response, bool) {
-	url := fmt.Sprintf("https://thewaidan.studio.site/%d", num)
-	rsp, err := http.Get(url)
-	if err != nil {
-		fmt.Println("Error: ", err)
-		return nil, true
-	}
-	return rsp, false
 }
