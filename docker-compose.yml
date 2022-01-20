@@ -1,0 +1,20 @@
+version: "3" # composeファイルのバージョン
+services:
+  app:
+    # サービス名
+    build: . # ①ビルドに使うDockerfileの場所
+    tty: true # ②コンテナの永続化
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src:/go/src/app # ③マウントディレクトリ
+    command: go run main.go
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    container_name: postgres
