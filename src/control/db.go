@@ -90,9 +90,9 @@ func connectDb() *sql.DB {
 	return db
 }
 
-func CreateTable(tableName string) {
+func CreateTable() {
 	db := connectDb()
-	_, err := db.Exec("create table $1 id serial, title text", tableName)
+	_, err := db.Exec("create table pointy (id serial, title text);")
 	utils.CheckError(err)
 }
 
