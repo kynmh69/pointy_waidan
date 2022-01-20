@@ -6,7 +6,7 @@ import (
 	"pointy/utils"
 )
 
-func main() {
+func updateDB() {
 	max_id := 0
 	article := control.GetLastRow()
 	if article != nil {
@@ -28,4 +28,7 @@ func main() {
 		fmt.Println(v.GetUrl())
 	}
 
+}
+func main() {
+	updateDB()
 }
