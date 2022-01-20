@@ -11,7 +11,7 @@ import (
 
 const (
 	DRIVER_NAME = "postgres"
-	IP_ADDRESS  = "127.0.0.1"
+	IP_ADDRESS  = "postgres"
 	USER        = "postgres"
 	PASS        = "postgres"
 	DB_NAME     = "postgres"
@@ -88,6 +88,12 @@ func connectDb() *sql.DB {
 	db, err := sql.Open(DRIVER_NAME, connectionInfo)
 	utils.CheckError(err)
 	return db
+}
+
+func CreateTable(tableName string) {
+	db := connectDb()
+	_, err := db.Exec("create table $1 id serial, title text", tableName)
+	utils.CheckError(err)
 }
 
 func GetConnectionInfo() string {

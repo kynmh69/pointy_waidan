@@ -7,4 +7,14 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./src :/go/src/app # ③マウントディレクトリ
+      - ./src:/go/src/app # ③マウントディレクトリ
+    command: go run main.go
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    container_name: postgres

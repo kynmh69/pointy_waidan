@@ -13,6 +13,8 @@ import (
 var templates = make(map[string]*template.Template)
 
 func updateDB() {
+	control.CreateTable("pointy")
+
 	max_id := 0
 	article := control.GetLastRow()
 	if article != nil {
