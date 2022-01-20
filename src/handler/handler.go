@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func handleIndex(w http.ResponseWriter, r *http.Request) {
+func HandleIndex(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("template/index.html")
 	if err != nil {
 		log.Fatalf("template error: %v", err)

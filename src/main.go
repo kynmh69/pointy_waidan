@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"pointy/control"
+	"pointy/handler"
 	"pointy/utils"
 )
 
@@ -35,7 +36,7 @@ func main() {
 	updateDB()
 
 	port := "8080"
-	http.HandleFunc("/", handler.handleIndex)
+	http.HandleFunc("/", handler.HandleIndex)
 	log.Printf("Server listening on port %s", port)
 	log.Print(http.ListenAndServe(":"+port, nil))
 }
