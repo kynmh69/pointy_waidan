@@ -1,6 +1,7 @@
 package control
 
 import (
+	"crypto/rand"
 	"database/sql"
 	"fmt"
 	"pointy/model"
@@ -93,7 +94,7 @@ func connectDb() *sql.DB {
 func CreateTable() {
 	db := connectDb()
 	_, err := db.Exec("create table pointy (id serial, title text);")
-	utils.CheckError(err)
+	fmt.Println(err)
 }
 
 func GetConnectionInfo() string {
