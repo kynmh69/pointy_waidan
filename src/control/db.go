@@ -1,7 +1,6 @@
 package control
 
 import (
-	"crypto/rand"
 	"database/sql"
 	"fmt"
 	"pointy/model"
