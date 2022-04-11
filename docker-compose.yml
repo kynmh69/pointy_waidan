@@ -11,10 +11,14 @@ services:
     command: go run main.go
     depends_on:
       - postgres
+    environment:
+      - TZ=Asia/Tokyo
+    container_name: pointy_waidan
   postgres:
     image: postgres:latest
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
+      - TZ=Asia/Tokyo
     container_name: postgres
